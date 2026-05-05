@@ -1,9 +1,7 @@
 import {PeerConnection} from "./peer-connection.js";
 import {Signaling} from "./signaling";
 import {UIManager} from "./ui-manager";
-import {DrawSoundVisualization, StringToColor} from "./visualization";
 import {ClientPositions, Position} from "./client-positions";
-import {StatSample} from "./stat-sample";
 
 
 /**
@@ -26,9 +24,7 @@ export function RoomJoin(signalling: Signaling, peerConnections: {
         }
     } = {};
 
-    let peerStats: {[key: string] : [StatSample]} = {}
-
-    signalling.BindEvents(IceCandidateQueue, peerConnections, peerPositions, positionsSocket, peerStats);
+    signalling.BindEvents(IceCandidateQueue, peerConnections, peerPositions, positionsSocket);
 
     signalling.Send({
         payload: {

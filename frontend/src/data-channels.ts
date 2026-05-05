@@ -50,8 +50,6 @@ export function BindPositionsChannel(dc: RTCDataChannel, id: string, clientPosit
     }
 
     dc.onmessage = (event: { data: string }) => {
-        // TODO: decompose
-        if (UIManager.appUI.manualPositions.checked) return;
         let data = event.data.split(";");
         let format = data[0];
         if (format == "GAME_EVENT" && clientPositions.communicator) {

@@ -26,8 +26,6 @@ export class UIManager {
             roomList: document.getElementById("roomList") as HTMLDivElement,
             errorMsgLabel: document.getElementById("errorMsg") as HTMLDivElement,
             videoContainer: document.getElementById("videoContainer") as HTMLDivElement,
-            manualPositions: document.getElementById("manualPositions") as HTMLInputElement,
-            distanceFalloff: document.getElementById("distanceFalloff") as HTMLInputElement,
             audioCtx: undefined,
         }
     }
@@ -47,7 +45,7 @@ export class UIManager {
 
         let signaling: Signaling = new Signaling(comm);
         signaling.Send({type: "listRooms", payload: {}});
-        signaling.BindEvents({}, peerConnections, {}, positionsSocket, {});
+        signaling.BindEvents({}, peerConnections, {}, positionsSocket);
 
         let downloadStatsButton = document.getElementById("downloadStatsButton") as HTMLButtonElement;
         downloadStatsButton.addEventListener('click', async e => {

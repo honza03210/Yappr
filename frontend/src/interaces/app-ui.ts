@@ -8,8 +8,6 @@ export interface AppUI {
     roomList: HTMLDivElement;
     errorMsgLabel: HTMLDivElement;
     videoContainer: HTMLDivElement;
-    manualPositions: HTMLInputElement;
-    distanceFalloff: HTMLInputElement;
     audioCtx: AudioContext | undefined;
 
 }
