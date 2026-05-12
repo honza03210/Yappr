@@ -99,7 +99,7 @@ export function UpdatePannerNodeFromPositions(panner: PannerNode, clientPosition
  */
 export function SetPanNodeParams(panNode: PannerNode) {
     // TODO: Pull from some config file
-    panNode.panningModel = "HRTF";
+    panNode.panningModel = "equalpower";
     panNode.distanceModel = "linear";
     panNode.refDistance = 1;
     panNode.maxDistance = 20;
