@@ -19,7 +19,7 @@
   "devDependencies": {
     "concurrently": "^9.2.1",
     "prettier": "^3.6.2",
-    "vite": "^7.1.11"
+    "vite": "^7.3.3"
   },
   "dependencies": {
     "jdenticon": "^3.3.0"
