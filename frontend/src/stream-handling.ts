@@ -25,12 +25,6 @@ export function HandleNewReceivedStream(stream: MediaStream, remoteAudio: HTMLAu
 
     SetPanNodeParams(panNode);
 
-    // UIManager.appUI.distanceFalloff.addEventListener("change", () => {
-    //     panNode.refDistance = UIManager.appUI.distanceFalloff.valueAsNumber;
-    //     panNode.maxDistance = UIManager.appUI.distanceFalloff.valueAsNumber * 10;
-    //     console.log("changed distance to:", panNode.refDistance, panNode.maxDistance);
-    // });
-
     microphone.connect(panNode);
     panNode.connect(analyser);
     analyser.connect(audioCtx!.destination);
@@ -67,8 +61,9 @@ export function HandleNewReceivedStream(stream: MediaStream, remoteAudio: HTMLAu
         }
     }
 
-    setInterval(UpdatePannerNodeFromPositions, 50, panNode, clientPositions, peerPositions, id)
+    const pannerInterval = setInterval(UpdatePannerNodeFromPositions, 50, panNode, clientPositions, peerPositions, id);
     requestAnimationFrame(draw);
+    return pannerInterval;
 }
 
 /**
@@ -83,10 +78,9 @@ export function UpdatePannerNodeFromPositions(panner: PannerNode, clientPosition
     if (!peerPositions[id]){
         return;
     }
-    // there could be some interpolation at the cost of latency
-    panner.positionX.setTargetAtTime(peerPositions[id].x - clientPositions.x, 0, 0.05);
-    panner.positionY.setTargetAtTime(peerPositions[id].y - clientPositions.y, 0, 0.05);
-    panner.positionZ.setTargetAtTime(-(peerPositions[id].z - clientPositions.z), 0, 0.05);
+    panner.positionX.setTargetAtTime(peerPositions[id].x - clientPositions.x, UIManager.appUI.audioCtx!.currentTime, 0.05);
+    panner.positionY.setTargetAtTime(peerPositions[id].y - clientPositions.y, UIManager.appUI.audioCtx!.currentTime, 0.05);
+    panner.positionZ.setTargetAtTime(-(peerPositions[id].z - clientPositions.z), UIManager.appUI.audioCtx!.currentTime, 0.05);
 
     // panner.positionX.value = (!Number.isNaN(peerPositions[id].x - clientPositions.x)) ? (peerPositions[id].x - clientPositions.x) : 0;
     // panner.positionY.value = (!Number.isNaN(peerPositions[id].y - clientPositions.y)) ? (peerPositions[id].y - clientPositions.y) : 0;

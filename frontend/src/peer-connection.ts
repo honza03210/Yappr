@@ -138,7 +138,7 @@ export async function InitPeerConnection(signaling: Signaling, id: string, peerC
         // Positions data stream init.
         if (offer) {
             console.log("creating data channel");
-            let dc = peerConnection.createDataChannel("positions", {ordered: true});
+            let dc = peerConnection.createDataChannel("positions", {ordered: false, maxRetransmits: 0});
             BindPositionsChannel(dc, id, clientPositions, peerPositions);
         } else {
             peerConnection.ondatachannel = (e) => {
@@ -165,39 +165,47 @@ export async function InitPeerConnection(signaling: Signaling, id: string, peerC
             console.log(e);
         };
 
-
+        let pannerInterval = 0;
         peerConnection.ontrack = async ev => {
-            HandleNewReceivedStream(ev.streams[0], remoteAudio, remoteVideo, id, clientPositions, peerPositions);
+            pannerInterval = HandleNewReceivedStream(ev.streams[0], remoteAudio, remoteVideo, id, clientPositions, peerPositions);
         };
 
-        setInterval(async () => {
-            const stats = await peerConnection.getStats();
+        const statsInterval = setInterval(async () => {
+            try {
+                const stats = await peerConnection.getStats();
 
-            let sample: StatSample = {
-                timestamp: Date.now(),
-            };
+                let sample: StatSample = {
+                    timestamp: Date.now(),
+                };
 
-            stats.forEach(report => {
-                if (report.type === "inbound-rtp" && report.kind === "audio") {
-                    sample.packetsLost = report.packetsLost;
-                    sample.packetsReceived = report.packetsReceived;
-                    sample.jitter = report.jitter;
-                }
-                if (report.type === "outbound-rtp" && report.kind === "audio") {
-                    sample.packetsSent = report.packetsSent;
-                    sample.bytesSent = report.bytesSent;
-                }
-                if (report.type === "candidate-pair" && report.state === "succeeded") {
-                    sample.rtt = report.currentRoundTripTime;
-                    sample.availableOutgoingBitrate = report.availableOutgoingBitrate;
-                }
-            });
+                stats.forEach(report => {
+                    if (report.type === "inbound-rtp" && report.kind === "audio") {
+                        sample.packetsLost = report.packetsLost;
+                        sample.packetsReceived = report.packetsReceived;
+                        sample.jitter = report.jitter;
+                    }
+                    if (report.type === "outbound-rtp" && report.kind === "audio") {
+                        sample.packetsSent = report.packetsSent;
+                        sample.bytesSent = report.bytesSent;
+                    }
+                    if (report.type === "candidate-pair" && report.state === "succeeded") {
+                        sample.rtt = report.currentRoundTripTime;
+                        sample.availableOutgoingBitrate = report.availableOutgoingBitrate;
+                    }
+                });
 
-            if (!signaling.peerStats![id]){
-                signaling.peerStats![id] = [];
+                if (!signaling.peerStats![id]) {
+                    signaling.peerStats![id] = [];
+                }
+
+                signaling.peerStats![id].push(sample);
             }
-
-            signaling.peerStats![id].push(sample);
+            catch(e: any){
+                console.error(e);
+                clearInterval(statsInterval);
+                clearInterval(pannerInterval);
+                console.log("stopped gathering stats for", peerConnection);
+            }
 
         }, 1000);
     } catch (e) {

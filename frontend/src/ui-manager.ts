@@ -84,6 +84,22 @@ export class UIManager {
         initButton.style.display = "block";
     }
 
+    static updateRoomsList(roomsList: any){
+        document.getElementById("rooms-list")?.replaceChildren(...roomsList.map(
+            (room: {roomID : string, numberOfUsers: number}) => {
+                let div = document.createElement("div");
+                div.innerText = `${room.roomID} : ${room.numberOfUsers} users connected`;
+                let button = document.createElement("button");
+                button.innerText = "Join room";
+                button.style.marginLeft = "1vw";
+                button.addEventListener("click", async () => {
+                    window.open(window.location.origin + `/?username=${UIManager.appUI.nameInput.value}&room_id=${room.roomID}&autojoin="true"`, "_blank");
+                })
+                div.appendChild(button);
+                return div;
+            }))
+    }
+
     static EnableJoinButton(peerConnections: { [p: string]: PeerConnection }, peerPositions: {[p: string]: Position}, positionsSocket: ClientPositions,
                             signalling: Signaling) {
         let joinButton = document.getElementById("joinRoomButton") as HTMLButtonElement;

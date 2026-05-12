@@ -155,9 +155,9 @@ export class ClientPositions extends Position {
                     this.heading = getHeadingVector(this.pitch, this.yaw);
                     let listener = UIManager.appUI.audioCtx!.listener;
 
-                    listener.forwardX.setValueAtTime(this.heading.x, 0.05);
-                    listener.forwardY.setValueAtTime(this.heading.y, 0.05);
-                    listener.forwardZ.setValueAtTime(this.heading.z, 0.05);
+                    listener.forwardX.setValueAtTime(this.heading.x, UIManager.appUI.audioCtx!.currentTime);
+                    listener.forwardY.setValueAtTime(this.heading.y, UIManager.appUI.audioCtx!.currentTime);
+                    listener.forwardZ.setValueAtTime(this.heading.z, UIManager.appUI.audioCtx!.currentTime);
                 }
             } catch (e) {
                 // The websocket doesn't need to send all positions (2d games, games with no rotation,...)

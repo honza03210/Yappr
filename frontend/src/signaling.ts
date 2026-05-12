@@ -122,20 +122,7 @@ export class Signaling {
                 UIManager.appUI.errorMsgLabel.innerHTML = eventData.message;
                 break;
             case "listRooms":
-                document.getElementById("rooms-list")?.replaceChildren(...eventData.roomsList.map(
-                    (room: {roomID : string, numberOfUsers: number}) => {
-                        let div = document.createElement("div");
-                        div.innerText = `${room.roomID} : ${room.numberOfUsers} users connected`;
-                        let button = document.createElement("button");
-                        button.innerText = "Join room";
-                        button.style.marginLeft = "1vw";
-                        button.addEventListener("click", async () => {
-                            window.open(window.location.origin + `/?username=${UIManager.appUI.nameInput.value}&room_id=${room.roomID}&autojoin="true"`, "_blank");
-                        })
-                        div.appendChild(button);
-                        console.log("RoomReceived: ", button, eventData);
-                        return div;
-                }))
+                UIManager.updateRoomsList(eventData.roomsList);
                 break;
             case "sharedWorkerMessage":
                 console.log("SharedWorker says: " + eventData.message);
@@ -157,12 +144,12 @@ export class Signaling {
                 break;
             case "listUsers":
                 console.log("listUsers: ", eventData);
-                break;
+
                 // Reconnect to users in the room when there isn't a connection between them already (crashed/failed)
                 // for (let userID of eventData.userIDs){
                 //     if ((userID !in this.peerConnections && userID > eventData.selfID)) {
                 //         console.log("reestablishing peer connection");
-                //         await InitPeerConnection(this, userID, this.peerConnections, this.peerPositions!, this.clientPositions!, true, userID);
+                //         await InitPeerConnection(this, userID, this.peerConnections, this.peerPositions!, this.clientPositions!, true, userID, null);
                 //         await this.peerConnections[userID].CreateOffer(this, userID);
                 //     }
                 // }
