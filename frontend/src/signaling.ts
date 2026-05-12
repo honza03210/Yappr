@@ -106,12 +106,7 @@ export class Signaling {
         console.log("EventName: ", eventName);
         switch (eventName) {
             case "connected":
-                console.log('Hello, successfully connected to the signaling server!');
-                document.getElementById("rooms-refresh")?.addEventListener("click", () => {
-                   this.Send({type: "listRooms", payload: {}});
-                   console.log("listRooms sent");
-                });
-                this.Send({type: "listRooms", payload: {}});
+                console.log('Successfully connected to the signaling server!');
                 break;
             case "roomConnected":
                 UIManager.inRoom = true;
@@ -119,7 +114,6 @@ export class Signaling {
                 console.log("Successfully connected to room " + eventData.roomID)
                 break;
             case "userDisconnected":
-                this.Send({type: "listRooms", payload: {}});
                 await HandleUserDisconnect(eventData.id, this.peerConnections, this.clientPositions);
                 console.log("disconnect:" + eventData);
                 break;
@@ -128,8 +122,6 @@ export class Signaling {
                 UIManager.appUI.errorMsgLabel.innerHTML = eventData.message;
                 break;
             case "listRooms":
-                console.log("listRooms: ", eventData);
-                // TODO: Move this logic away from the Signaling Object
                 document.getElementById("rooms-list")?.replaceChildren(...eventData.roomsList.map(
                     (room: {roomID : string, numberOfUsers: number}) => {
                         let div = document.createElement("div");
@@ -152,10 +144,6 @@ export class Signaling {
                 console.log("ICECANDIDATE:", eventData)
                 if (this.IceCandidateQueue[eventData.id] && this.IceCandidateQueue[eventData.id]!.popped) {
                     console.log("getCandidate", eventData.candidate.candidate);
-                    // if (this.peerConnections[eventData.id]!.connectionState == "connected") {
-                    //     console.log("getCandidate ignored - connected");
-                    //     return;
-                    // }
                     this.peerConnections[eventData.id]!.addIceCandidate(new RTCIceCandidate(eventData.candidate.candidate)).then(() => {
                         console.log("candidate add success");
                     });
@@ -187,7 +175,7 @@ export class Signaling {
                     console.log("undefined queue");
                     return;
                 }
-                await useQueuedCandidates(this.peerConnections, this.IceCandidateQueue, eventData.id)
+                // await useQueuedCandidates(this.peerConnections, this.IceCandidateQueue, eventData.id)
                 this.IceCandidateQueue[eventData.id]!.popped = true;
                 break;
             case "getOffer":
@@ -196,6 +184,7 @@ export class Signaling {
                 await InitPeerConnection(this, eventData.id, this.peerConnections, this.peerPositions!, this.clientPositions!, false, eventData.username, eventData.pfpUrl);
                 console.log("Initiated connection", this.peerConnections[eventData.id]!);
                 await this.peerConnections[eventData.id].CreateAnswer(this, eventData.sdp, eventData.id);
+                await useQueuedCandidates(this.peerConnections, this.IceCandidateQueue, eventData.id)
                 console.log("Created answer", this.peerConnections[eventData.id]!);
                 break;
             case "getAnswer":
@@ -204,6 +193,7 @@ export class Signaling {
                 if (!this.peerConnections[eventData.id]!.remoteDescription || !this.peerConnections[eventData.id]!.remoteDescription!.type) {
                     console.log("setting remote desc after getting an answer");
                     await this.peerConnections[eventData.id]!.setRemoteDescription(eventData.sdp);
+                    await useQueuedCandidates(this.peerConnections, this.IceCandidateQueue, eventData.id)
                 }
                 console.log("answerAck sent")
                 this.Send({payload: {dest: eventData.id}, type: "answerAck"});
@@ -213,10 +203,9 @@ export class Signaling {
                     return;
                 }
                 console.log("getAnswerAck");
-                await useQueuedCandidates(this.peerConnections, this.IceCandidateQueue, eventData.id)
+                // await useQueuedCandidates(this.peerConnections, this.IceCandidateQueue, eventData.id)
                 break;
             case "PeerJoined":
-                this.Send({type: "listRooms", payload: {}});
                 console.log("Peer joined: " + eventData.id);
                 if (this.peerConnections[eventData.id]) {
                     console.log("peer already connected");

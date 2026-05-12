@@ -1,3 +1,3 @@
 export const ServerConfig = {
-    url: 'https://yappr.cz',
+    url: 'http://localhost:3001',
 }
