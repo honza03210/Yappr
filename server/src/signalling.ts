@@ -100,14 +100,26 @@ export function signalling(server : any) {
             // socket.broadcast.to(socket.data.roomId).emit("room_users", { id: socket.id, users: users.join(", ")});
             console.log("[joined] room:" + roomId + " name: " + data.name);
             usernames[socket.id] = data.name;
+            socket.broadcast.to(socket.data.roomId).emit("PeerJoined", {
+                id: socket.id,
+                username: data.name,
+                pfpUrl: data.pfpUrl ?? ""
+            });
+            console.log("pfp: ", data.pfpUrl);
             socket.emit("roomConnected", { selfID: socket.id, roomID: roomId });
             socket.broadcast.to(socket.data.roomId).emit("PeerJoined", { id: socket.id, username: data.name });
             await sendUserCredentials(socket, data.name);
             setTimeout(() =>{ listUserIDs(socket, socket.data.roomId) }, 5000)
         });
-        socket.on("offer", (payload: {dest: string, sdp: any}) => {
+        socket.on("offer", (payload: {dest: string, sdp: any, pfpUrl: any}) => {
             if (!payload || !payload.dest || !payload.sdp) return;
-            io.to(payload.dest).emit("getOffer", {id: socket.id, sdp: payload.sdp, username: usernames[socket.id]});
+            io.to(payload.dest).emit("getOffer", {
+                id: socket.id,
+                sdp: payload.sdp,
+                username: usernames[socket.id], // Adjusted from object above
+                pfpUrl: payload.pfpUrl
+            });
+            // io.to(payload.dest).emit("getOffer", {id: socket.id, sdp: payload.sdp, username: usernames[socket.id]});
             console.log("offer from " + socket.id + " to " + payload.dest);
         });
         socket.on("answerAck", (payload: {dest: string}) => {
