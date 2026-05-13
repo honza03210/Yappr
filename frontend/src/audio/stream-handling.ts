@@ -63,7 +63,7 @@ export function HandleNewReceivedStream(stream: MediaStream, remoteAudio: HTMLAu
         }
     }
 
-    const pannerInterval = setInterval(UpdatePannerNodeFromPositions, 50, panNode, clientPositions, peerPositions, id);
+    const pannerInterval = setInterval(UpdatePannerNodeFromPositions, 250, panNode, clientPositions, peerPositions, id);
     signaling.peerRunningIntervals[id].push(pannerInterval);
     requestAnimationFrame(draw);
     return pannerInterval;
@@ -81,18 +81,32 @@ export function UpdatePannerNodeFromPositions(panner: PannerNode, clientPosition
     if (!peerPositions[id]){
         return;
     }
-    panner.positionX.setTargetAtTime(peerPositions[id].x - clientPositions.x, UIManager.appUI.audioCtx!.currentTime, 0.25);
-    panner.positionY.setTargetAtTime(peerPositions[id].y - clientPositions.y, UIManager.appUI.audioCtx!.currentTime, 0.25);
-    panner.positionZ.setTargetAtTime(-(peerPositions[id].z - clientPositions.z), UIManager.appUI.audioCtx!.currentTime, 0.25);
 
-    // panner.positionX.value = (!Number.isNaN(peerPositions[id].x - clientPositions.x)) ? (peerPositions[id].x - clientPositions.x) : 0;
-    // panner.positionY.value = (!Number.isNaN(peerPositions[id].y - clientPositions.y)) ? (peerPositions[id].y - clientPositions.y) : 0;
-    // panner.positionZ.value = (!Number.isNaN(peerPositions[id].z - clientPositions.z)) ? (peerPositions[id].z - clientPositions.z) : 0;
-    let headX = (!Number.isNaN(clientPositions.heading.x)) ? -clientPositions.heading.x : 0;
-    let headY = (!Number.isNaN(clientPositions.heading.y)) ? -clientPositions.heading.y : 0;
-    let headZ = (!Number.isNaN(clientPositions.heading.z)) ? -clientPositions.heading.z : 0;
-    //UIManager.appUI.audioCtx.listener.setOrientation(headX, headZ, headY, 0, 1, 0);
+    const audioCtx = UIManager.appUI.audioCtx!;
+    const t = audioCtx.currentTime;
+    const listener = audioCtx.listener;
+    // mc stores z as -mc_z at parse time; negate again to get raw MC z, which
+    // matches the convention used by GetMinecraftHeadingVector (south = +z)
+    const zSign = clientPositions.PositionFormat === "mc" ? -1 : 1;
 
+    // cancelAndHoldAtTime freezes any in-progress automation at the current
+    // value, preventing accumulated curves from causing pops on direction change
+    function smooth(param: AudioParam, value: number) {
+        param.cancelAndHoldAtTime(t);
+        param.setTargetAtTime(value, t, 0.08);
+    }
+
+    smooth(listener.positionX, clientPositions.x);
+    smooth(listener.positionY, clientPositions.y);
+    smooth(listener.positionZ, clientPositions.z * zSign);
+
+    smooth(listener.forwardX, clientPositions.heading.x);
+    smooth(listener.forwardY, clientPositions.heading.y);
+    smooth(listener.forwardZ, clientPositions.heading.z);
+
+    smooth(panner.positionX, peerPositions[id].x);
+    smooth(panner.positionY, peerPositions[id].y);
+    smooth(panner.positionZ, peerPositions[id].z * zSign);
 }
 
 /**

@@ -1,4 +1,3 @@
-import {UIManager} from "../ui/ui-manager";
 import {GetMinecraftHeadingVector} from "./converters";
 
 /**
@@ -124,20 +123,7 @@ export class ClientPositions extends Position {
                     this.pitch = Math.max(Math.min(90, parseFloat(data[4])), -90);
                     this.yaw = Math.max(Math.min(360, parseFloat(data[5])), -180);
 
-                    let listener = UIManager.appUI.audioCtx!.listener;
-
                     this.heading = GetMinecraftHeadingVector(this.pitch, this.yaw);
-                    console.log("setting forward vector");
-                    if (listener.forwardX) {
-                        listener.forwardX.setTargetAtTime(this.heading.x, UIManager.appUI.audioCtx!.currentTime, 0.25);
-                        listener.forwardY.setTargetAtTime(this.heading.y, UIManager.appUI.audioCtx!.currentTime, 0.25);
-                        listener.forwardZ.setTargetAtTime(this.heading.z, UIManager.appUI.audioCtx!.currentTime, 0.25);
-                    } else {
-                        console.log("deprecated setOrientation");
-                        // deprecated, but firefox needs this
-                        listener.setOrientation(this.heading.x, this.heading.y, this.heading.z, 0, 1, 0);
-                    }
-                    console.log("set fw v");
                 }
                 else {
                     this.x = parseFloat(data[1]);
@@ -154,11 +140,6 @@ export class ClientPositions extends Position {
                     if (Number.isNaN(this.pitch)) this.pitch = 0;
                     if (Number.isNaN(this.yaw)) this.yaw = 0;
                     this.heading = getHeadingVector(this.pitch, this.yaw);
-                    let listener = UIManager.appUI.audioCtx!.listener;
-
-                    listener.forwardX.setTargetAtTime(this.heading.x, UIManager.appUI.audioCtx!.currentTime, 0.25);
-                    listener.forwardY.setTargetAtTime(this.heading.y, UIManager.appUI.audioCtx!.currentTime, 0.25);
-                    listener.forwardZ.setTargetAtTime(this.heading.z, UIManager.appUI.audioCtx!.currentTime, 0.25);
                 }
             } catch (e) {
                 // The websocket doesn't need to send all positions (2d games, games with no rotation,...)
