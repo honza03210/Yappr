@@ -93,8 +93,6 @@ export function BindPositionsChannel(dc: RTCDataChannel, id: string, clientPosit
         if (clientPositions.sendPeerPositionsBack) {
             clientPositions.SendServerEvent(`POSITION;${id};${peerPositions[id].RawPositions}`);
         }
-        console.log("Position object of the peer: ", peerPositions[id]);
-        console.log("Received positions from ", id, format, data);
     }
 }
 

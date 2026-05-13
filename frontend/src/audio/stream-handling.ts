@@ -92,7 +92,8 @@ export function UpdatePannerNodeFromPositions(panner: PannerNode, clientPosition
     // cancelAndHoldAtTime freezes any in-progress automation at the current
     // value, preventing accumulated curves from causing pops on direction change
     function smooth(param: AudioParam, value: number) {
-        param.cancelAndHoldAtTime?.(t);
+        param.cancelScheduledValues(t);
+        param.setValueAtTime(param.value, t);
         param.setTargetAtTime(value, t, 0.08);
     }
 
