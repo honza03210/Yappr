@@ -102,7 +102,7 @@ export class UIManager {
     }
 
     static async initAudio(){
-        this.appUI.audioCtx = new AudioContext({ latencyHint: "interactive", sampleRate: 48000 });
+        this.appUI.audioCtx = new AudioContext();
         const stream = await navigator.mediaDevices
             .getUserMedia({
                 audio: {

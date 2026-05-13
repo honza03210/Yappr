@@ -15,6 +15,7 @@ export function BindPositionsChannel(dc: RTCDataChannel, id: string, clientPosit
             if (!event.data) {
                 return;
             }
+            console.log("Received:", event.data);
             let data = event.data.split(";");
             if (data[0] == "GAME_EVENT" && dc.readyState == "open") {
                 console.log("Sent GAME_EVENT message: ", event.data);
@@ -94,3 +95,48 @@ export function BindPositionsChannel(dc: RTCDataChannel, id: string, clientPosit
         }
     }
 }
+
+
+// /**
+//  * Binding positions data stream to actual position objects to read from
+//  * @param dc
+//  * @param userID
+//  * @constructor
+//  */
+// export function BindLatencyChannel(dc: RTCDataChannel, userID: string) {
+//     console.log("BindLatencyChannel");
+//
+//     function startPingLoop(){
+//         console.log("LatencyChannel open");
+//         function sendPing() {
+//             setTimeout(() => {
+//                 const now = Date.now();
+//                 dc.send(JSON.stringify({ type: "ping", t: now }));
+//                 sendPing()
+//             }, 1000)
+//         }
+//         setTimeout(sendPing, 1000);
+//     }
+//
+//     dc.onopen = startPingLoop;
+//
+//     if (dc.readyState === "open") {
+//         setTimeout(startPingLoop, 50);
+//     }
+//
+//     let latencyView = document.getElementById("latency-" + userID)
+//
+//     dc.onmessage = (e: { data: string }) => {
+//         const msg = JSON.parse(e.data);
+//
+//         if (msg.type === "ping") {
+//             dc.send(JSON.stringify({ type: "pong", t: msg.t }));
+//         }
+//
+//         if (msg.type === "pong") {
+//             const rtt = Date.now() - msg.t;
+//             // latencyView!.innerText = "" + rtt.toString() + " ms";
+//             console.log("Ping:", rtt, "ms");
+//         }
+//     }
+// }

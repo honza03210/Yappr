@@ -15,7 +15,6 @@ export class PeerConnection extends RTCPeerConnection {
         this
             .createOffer({offerToReceiveAudio: true, offerToReceiveVideo: false})
             .then(async sdp => {
-                sdp.sdp = setPtime(sdp.sdp!, 10);
                 await this.setLocalDescription(sdp);
                 signaling.Send({type: "offer", payload: {dest: destID, sdp: sdp, pfpUrl: UIManager.pfpUrl}});
             })
@@ -34,7 +33,6 @@ export class PeerConnection extends RTCPeerConnection {
                     offerToReceiveAudio: true,
                 })
                 .then(async sdp1 => {
-                    sdp1.sdp = setPtime(sdp1.sdp!, 10);
                     await this.setLocalDescription(sdp1);
                     signaling.Send({type: "answer", payload: {dest: destID, sdp: sdp1}})
                 })
@@ -43,21 +41,6 @@ export class PeerConnection extends RTCPeerConnection {
                 });
         });
     }
-}
-
-function setPtime(sdp: string, ms: number): string {
-    // Replace existing ptime/maxptime lines, or insert after the first audio m= line
-    if (/a=ptime:\d+/.test(sdp)) {
-        sdp = sdp.replace(/a=ptime:\d+/g, `a=ptime:${ms}`);
-    } else {
-        sdp = sdp.replace(/(m=audio.*\r?\n)/, `$1a=ptime:${ms}\r\n`);
-    }
-    if (/a=maxptime:\d+/.test(sdp)) {
-        sdp = sdp.replace(/a=maxptime:\d+/g, `a=maxptime:${ms}`);
-    } else {
-        sdp = sdp.replace(/(m=audio.*\r?\n)/, `$1a=maxptime:${ms}\r\n`);
-    }
-    return sdp;
 }
 
 function CreatePeerUI(id: string, pfpUrl: string, username: string) : [HTMLAudioElement, HTMLCanvasElement]{
