@@ -3,6 +3,7 @@ import {ClientPositions, Position} from "../position/client-positions";
 import {UIManager} from "../ui/ui-manager";
 import {DrawSoundVisualization, StringToColor} from "../ui/visualization";
 import {Signaling} from "../signaling/signaling";
+import {SetPanNodeParams} from "../configs/panner-config";
 
 /**
  * Handles new audio stream - visualization and spatial audio updates
@@ -85,12 +86,8 @@ export function UpdatePannerNodeFromPositions(panner: PannerNode, clientPosition
     const audioCtx = UIManager.appUI.audioCtx!;
     const t = audioCtx.currentTime;
     const listener = audioCtx.listener;
-    // mc stores z as -mc_z at parse time; negate again to get raw MC z, which
-    // matches the convention used by GetMinecraftHeadingVector (south = +z)
     const zSign = clientPositions.PositionFormat === "mc" ? -1 : 1;
 
-    // cancelAndHoldAtTime freezes any in-progress automation at the current
-    // value, preventing accumulated curves from causing pops on direction change
     function smooth(param: AudioParam, value: number) {
         param.cancelScheduledValues(t);
         param.setValueAtTime(param.value, t);
@@ -118,19 +115,3 @@ export function UpdatePannerNodeFromPositions(panner: PannerNode, clientPosition
     smooth(panner.positionZ, peerPositions[id].z * zSign);
 }
 
-/**
- * Initial PannerNode params
- * @param panNode
- * @constructor
- */
-export function SetPanNodeParams(panNode: PannerNode) {
-    // TODO: Pull from some config file
-    panNode.panningModel = "equalpower";
-    panNode.distanceModel = "linear";
-    panNode.refDistance = 1;
-    panNode.maxDistance = 20;
-    panNode.rolloffFactor = 1;
-    panNode.coneInnerAngle = 360;
-    panNode.coneOuterAngle = 360;
-    panNode.coneOuterGain = 1;
-}
