@@ -128,7 +128,7 @@ export class UIManager {
                 div.innerText = `${room.roomID} : ${room.numberOfUsers} users connected`;
                 let button = document.createElement("button");
                 button.innerText = "Join room";
-                button.style.marginLeft = "1vw";
+                button.classList.add("menu-button");
                 button.addEventListener("click", async () => {
                     window.open(window.location.origin + `/?username=${UIManager.appUI.nameInput.value}&room_id=${room.roomID}&autojoin="true"`, "_blank");
                 })

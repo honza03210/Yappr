@@ -151,6 +151,17 @@ input:checked {
 
 #rooms-list > div {
     margin: 0.2vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1vw;
+}
+
+#rooms-list .menu-button {
+    width: auto;
+    padding: 6px 12px;
+    margin: 0;
+    font-size: 0.9em;
 }
 
 #rooms-list-menu {

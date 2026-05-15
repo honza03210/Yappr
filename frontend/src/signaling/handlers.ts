@@ -26,14 +26,22 @@ export function RoomJoin(signaling: Signaling, peerConnections: {
 
     signaling.BindEvents(IceCandidateQueue, peerConnections, peerPositions, positionsSocket);
 
+    let username = UIManager.appUI.nameInput.value != "" ? UIManager.appUI.nameInput.value : `user-${Math.random().toString(36).substring(2, 10)}`;
+    UIManager.appUI.nameInput.value = username;
+    UIManager.appUI.nameInput.dispatchEvent(new Event("change"));
+
     signaling.Send({
         payload: {
             roomId: UIManager.appUI.roomIDInput.value,
-            name: UIManager.appUI.nameInput.value != "" ? UIManager.appUI.nameInput.value : `user-${Math.random().toString(36).substring(2, 10)}`,
+            name: username,
             password: UIManager.appUI.passwordInput.value,
             pfpUrl: UIManager.pfpUrl
         }, type: "join"
     });
+
+    UIManager.appUI.nameInput.disabled = true;
+    UIManager.appUI.roomIDInput.disabled = true;
+    UIManager.appUI.passwordInput.disabled = true;
 
     console.log("join posted");
 }
