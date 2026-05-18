@@ -1,9 +1,9 @@
-# PVC
+# Yappr
 ## Web-Based Peer-to-Peer Proximity Voice Chat
 
 Proximity chat with simple integration into any game.
 All that is needed is creating a websocket server in the game (either locally or on the game server) that will feed the position data into the browser client.
-At this moment there is a working example of usage in a Minecraft [mod](https://github.com/honza03210/PVC-minecraft-mod) (client side) and a [plugin](https://github.com/honza03210/PVC-minecraft-plugin) (server side).
+At this moment there is a working example of usage in a Minecraft [mod](https://github.com/honza03210/Yappr-minecraft-mod) (client side) and a [plugin](https://github.com/honza03210/Yappr-minecraft-plugin) (server side).
 The game generates an url that passes the important parameters to the browser.
 
 ```VOICE_CHAT_URL/?username=PLAYER_USERNAME&room_id=ROOM_NAME&websocket_address=POSITIONS_WEBSOCKET_ADDRESS:%d&user_token=USER_TOKEN&password-INSECURE=ROOM_PASSWORD&autojoin```
@@ -14,8 +14,8 @@ For a version working fully and reliably on the internet a TURN server is needed
 
 ### How To Setup Local Hosting
 ```
-git clone https://github.com/honza03210/PVC/
-cd PVC
+git clone https://github.com/honza03210/Yappr/
+cd Yappr
 npm install
 mv ./server/src/turn-secret-key.template.ts ./server/src/turn-secret-key.ts
 mv ./server/src/backup-ice-server-array.template.ts ./server/src/backup-ice-server-array.ts
