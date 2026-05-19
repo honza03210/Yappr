@@ -163,7 +163,11 @@ export class UIManager {
     }
 }
 
-
+/**
+ * Downloads all the stats collected in signaling
+ * @param signaling
+ * @constructor
+ */
 function DownloadStats(signaling: Signaling) {
     const jsonString = JSON.stringify(signaling.peerStats, null, 2);
     const blob = new Blob([jsonString], { type: "application/json" });
