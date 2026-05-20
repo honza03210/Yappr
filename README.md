@@ -4,7 +4,7 @@
 Proximity chat with simple integration into any game.
 All that is needed is creating a websocket server in the game (either locally or on the game server) that will feed the position data into the browser client.
 At this moment there is a working example of usage in a Minecraft [mod](https://github.com/honza03210/Yappr-minecraft-mod) (client side) and a [plugin](https://github.com/honza03210/Yappr-minecraft-plugin) (server side).
-The game generates an url that passes the important parameters to the browser.
+The game generates azn url that passes the important parameters to the browser.
 
 ```VOICE_CHAT_URL/?username=PLAYER_USERNAME&room_id=ROOM_NAME&websocket_address=POSITIONS_WEBSOCKET_ADDRESS:%d&user_token=USER_TOKEN&password-INSECURE=ROOM_PASSWORD&autojoin```
 
