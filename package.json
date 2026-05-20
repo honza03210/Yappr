@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prod": "concurrently \"npm run dev:server\" \"npm run prod:frontend\"",
+    "prod": "npm run prod:frontend && npm run dev:server",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:frontend\"",
     "dev:server": "npm --workspace server run dev",
     "dev:frontend": "npm --workspace frontend run dev",
