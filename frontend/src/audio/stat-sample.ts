@@ -1,3 +1,6 @@
+/**
+ * Used to store a stat sample when gathering connection statistics
+ */
 export type StatSample = {
     timestamp: number;
 

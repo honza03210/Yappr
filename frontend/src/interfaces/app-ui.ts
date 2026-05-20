@@ -1,3 +1,6 @@
+/**
+ * An interface to keep HTML elements inside UI manager with no need to look them up in DOM
+ */
 export interface AppUI {
     localVisualization: HTMLCanvasElement;
     localAudio: HTMLAudioElement;

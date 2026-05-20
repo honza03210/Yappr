@@ -6,7 +6,7 @@ import {Signaling} from "../signaling/signaling";
 import {SetPanNodeParams} from "../configs/panner-config";
 
 /**
- * Handles new audio stream - visualization and spatial audio updates
+ * Handles new audio stream - both visualization and spatial audio updates
  * @param stream
  * @param remoteAudio
  * @param remoteVideo
@@ -21,6 +21,8 @@ export function HandleNewReceivedStream(stream: MediaStream, remoteAudio: HTMLAu
         remoteAudio.muted = true;
         remoteAudio.srcObject = stream;
     }
+
+    // creates the audio pipeline
     let audioCtx = UIManager.appUI.audioCtx;
     let microphone = audioCtx!.createMediaStreamSource(stream);
     let analyser = audioCtx!.createAnalyser();
@@ -58,6 +60,7 @@ export function HandleNewReceivedStream(stream: MediaStream, remoteAudio: HTMLAu
     remoteVideo.style.margin = "auto";
     const WIDTH = remoteVideo.width;
     const HEIGHT = remoteVideo.height;
+
     function draw() {
         if (DrawSoundVisualization(canvasCtx, WIDTH, HEIGHT, analyser, dataArray, remoteVideoColor, remoteVideoStroke, bufferLength, id)){
             requestAnimationFrame(draw);
@@ -71,7 +74,8 @@ export function HandleNewReceivedStream(stream: MediaStream, remoteAudio: HTMLAu
 }
 
 /**
- * Updates panner node from the client and peer positions
+ * Updates panner node from the client and peer positions.
+ * Uses smoothing to make the transition as smooth as possible even with low update rate.
  * @param panner
  * @param clientPositions
  * @param peerPositions

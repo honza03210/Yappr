@@ -39,7 +39,8 @@ export function BindStreamAnimation(stream: MediaStream, audioCtx: AudioContext)
 
 
 /**
- *
+ * Draws the sound visualization into the canvasCtx based on the params provided
+ * This could be used in the future to draw different visualizations
  * @param canvasCtx
  * @param WIDTH
  * @param HEIGHT
@@ -63,6 +64,17 @@ export function DrawSoundVisualization(canvasCtx: CanvasRenderingContext2D, WIDT
     return true;
 }
 
+/**
+ * Draws a circular sound visualization onto canvasCtx
+ * Uses
+ * @param canvasCtx
+ * @param WIDTH
+ * @param HEIGHT
+ * @param analyser
+ * @param dataArray
+ * @param remoteVideoStroke
+ * @param name
+ */
 function visualizationCircular(canvasCtx: CanvasRenderingContext2D, WIDTH: number, HEIGHT: number, analyser: AnalyserNode, dataArray: Uint8Array<ArrayBuffer>, remoteVideoStroke: string, name: string | null){
     analyser.getByteTimeDomainData(dataArray);
 
@@ -111,6 +123,12 @@ export function StringToColor(str: string) {
     return `rgb(${r}, ${g}, ${b})`;
 }
 
+/**
+ * Computes average around given index from values between halfSize distance in both directions
+ * @param data
+ * @param index
+ * @param halfSize
+ */
 export function convolutionAverageAroundIndex(data: Uint8Array<ArrayBuffer>, index: number, halfSize: number) {
     let sum = data[index];
     for (let i = 1; i <= halfSize; i++) {

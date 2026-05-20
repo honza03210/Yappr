@@ -7,8 +7,11 @@ import {Signaling} from "../signaling/signaling";
 import {ClientPositions, Position} from "../position/client-positions";
 import {BindStreamAnimation} from "./visualization";
 import * as jdenticon from "jdenticon";
+import {BindPositionsChannel} from "../audio/data-channels";
 
-
+/**
+ * Class that takes care of all the frontend UI update logic and state
+ */
 export class UIManager {
     static appUI: AppUI;
     static inRoom: boolean = false;
@@ -32,6 +35,9 @@ export class UIManager {
         this.setPfp();
     }
 
+    /**
+     * reads the pfp_url from the url and displays it
+     */
     static setPfp(){
         const urlParams = new URLSearchParams(window.location.search);
 
@@ -66,6 +72,10 @@ export class UIManager {
         }
     }
 
+    /**
+     * Reads values from the url and fills them into the input fields
+     * @constructor
+     */
     static PrefillFieldsFromUrl() {
         const urlParams = new URLSearchParams(window.location.search);
         UIManager.appUI.nameInput.value = urlParams.get("username") ?? "";
@@ -73,6 +83,13 @@ export class UIManager {
         UIManager.appUI.passwordInput.value = urlParams.get("password-INSECURE") ?? "";
     }
 
+    /**
+     * Binds the logic that has to happen before and after "Initialize" button click
+     * @param peerConnections
+     * @param peerPositions
+     * @param positionsSocket
+     * @constructor
+     */
     static async EnableInitButton(peerConnections: { [p: string]: PeerConnection }, peerPositions: {[p: string]: Position}, positionsSocket: ClientPositions) {
         let comm = io(ServerConfig.url, {
             transports: ['websocket', 'polling'],
@@ -103,6 +120,9 @@ export class UIManager {
         initButton.style.display = "block";
     }
 
+    /**
+     * Initializes the user audio and its visualization
+     */
     static async initAudio(){
         this.appUI.audioCtx = new AudioContext();
         const stream = await navigator.mediaDevices
@@ -120,6 +140,10 @@ export class UIManager {
         this.appUI.localAudioStream = stream;
     }
 
+    /**
+     * Updates the list of rooms from the provided roomsList
+     * @param roomsList
+     */
     static updateRoomsList(roomsList: any){
         document.getElementById("rooms-list")?.replaceChildren(...roomsList.map(
             (room: {roomID : string, numberOfUsers: number}) => {
@@ -136,6 +160,14 @@ export class UIManager {
             }))
     }
 
+    /**
+     * Binds the logic for clicking the "Join" button and makes it visible
+     * @param peerConnections
+     * @param peerPositions
+     * @param positionsSocket
+     * @param signaling
+     * @constructor
+     */
     static EnableJoinButton(peerConnections: { [p: string]: PeerConnection }, peerPositions: {[p: string]: Position}, positionsSocket: ClientPositions,
                             signaling: Signaling) {
         let joinButton = document.getElementById("joinRoomButton") as HTMLButtonElement;
@@ -150,6 +182,11 @@ export class UIManager {
         joinButton.style.display = "block";
     }
 
+    /**
+     * binds the logic for the "Leave" button and makes it visible
+     * @param signaling
+     * @constructor
+     */
     static EnableDisconnectButton(signaling: Signaling) {
         let disconnectButton = document.getElementById("leaveRoomButton") as HTMLButtonElement;
 
@@ -180,4 +217,69 @@ function DownloadStats(signaling: Signaling) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+}
+
+
+export function CreatePeerUI(id: string, pfpUrl: string, username: string) : [HTMLAudioElement, HTMLCanvasElement]{
+    const peerContainer = document.createElement("div");
+    peerContainer.classList.add("roomBound");
+    peerContainer.style.position = "relative";
+    peerContainer.id = "peerContainer-" + id;
+    const peerVisualizationContainer = document.createElement("div");
+    peerVisualizationContainer.style.position = "relative";
+    const remoteVideo = document.createElement("canvas");
+    remoteVideo.width = 128;
+    remoteVideo.height = 128;
+    remoteVideo.style.display = "block";
+
+    const remoteAudio: HTMLAudioElement = document.createElement("audio");
+
+    remoteVideo.id = "remoteVideo-" + id;
+    remoteVideo.classList.add("roomBound");
+    remoteAudio.id = "remoteAudio-" + id;
+
+    remoteAudio.autoplay = true;
+    remoteAudio.muted = false;
+    remoteAudio.classList.add("roomBound");
+
+    let pfp: HTMLImageElement | SVGSVGElement;
+    console.log("pfp url: ", pfpUrl);
+    if (pfpUrl != "" && pfpUrl != undefined) {
+        pfp = document.createElement("img");
+        pfp.classList.add("pfp");
+        pfp.height = 64;
+        pfp.width = 64;
+        pfp.src = pfpUrl;
+    } else {
+        pfp = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg"
+        );
+
+        pfp.classList.add("pfp");
+        pfp.setAttribute("width", "70");
+        pfp.setAttribute("height", "70");
+
+        pfp.style.borderRadius = "50%";
+        pfp.style.overflow = "hidden";
+    }
+
+    const latency = document.createElement("div");
+    latency.id = "latency-" + id;
+    latency.innerText = username;
+    latency.style.textAlign = "center";
+    latency.classList.add("latency");
+
+
+    if (UIManager.appUI.peerContainer) {
+        peerVisualizationContainer.append(remoteAudio, remoteVideo);
+        if (pfpUrl == "" || pfpUrl == undefined) jdenticon.update(pfp, username);
+        peerVisualizationContainer.append(pfp);
+        peerContainer.append(peerVisualizationContainer);
+        peerContainer.append(latency);
+        UIManager.appUI.peerContainer.appendChild(peerContainer);
+    }
+
+    return [remoteAudio, remoteVideo];
+
 }

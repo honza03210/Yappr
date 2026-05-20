@@ -3,10 +3,17 @@ import {Socket} from "socket.io-client";
 export type SignalingMessage = {type: string, payload?: any};
 export type SignalingEventHandler = (eventName: string, eventData: any) => void | Promise<void>;
 
-
+/**
+ * Class that abstracts the communication with the signaling server - a shared worker may be used
+ * instead of Socket.IO
+ */
 export class SignalingTransport {
     constructor(public communicator: Socket | MessagePort) {}
 
+    /**
+     * Sends a message to the communicator
+     * @param message
+     */
     send(message: SignalingMessage) {
         if ("emit" in this.communicator) {
             this.communicator.emit(message.type, message.payload);
@@ -17,10 +24,17 @@ export class SignalingTransport {
         }
     }
 
+    /**
+     * closes the connection to the communicator
+     */
     close() {
         this.communicator.close();
     }
 
+    /**
+     * binds the events the communicator may send
+     * @param onEvent
+     */
     bindEvents(onEvent: SignalingEventHandler) {
         this.handlerRef = onEvent;
         if ("onAny" in this.communicator) {

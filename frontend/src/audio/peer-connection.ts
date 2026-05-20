@@ -5,6 +5,7 @@ import * as jdenticon from "jdenticon";
 import {BindPositionsChannel} from "./data-channels";
 import {StatSample} from "./stat-sample";
 import {HandleNewReceivedStream} from "./stream-handling";
+import {CreatePeerUI} from "../ui/ui-manager";
 
 /**
  * Class taking care of the connection between the peers - used to abstract Offer/Answer exchange
@@ -41,70 +42,6 @@ export class PeerConnection extends RTCPeerConnection {
                 });
         });
     }
-}
-
-function CreatePeerUI(id: string, pfpUrl: string, username: string) : [HTMLAudioElement, HTMLCanvasElement]{
-    const peerContainer = document.createElement("div");
-    peerContainer.classList.add("roomBound");
-    peerContainer.style.position = "relative";
-    peerContainer.id = "peerContainer-" + id;
-    const peerVisualizationContainer = document.createElement("div");
-    peerVisualizationContainer.style.position = "relative";
-    const remoteVideo = document.createElement("canvas");
-    remoteVideo.width = 128;
-    remoteVideo.height = 128;
-    remoteVideo.style.display = "block";
-
-    const remoteAudio: HTMLAudioElement = document.createElement("audio");
-
-    remoteVideo.id = "remoteVideo-" + id;
-    remoteVideo.classList.add("roomBound");
-    remoteAudio.id = "remoteAudio-" + id;
-
-    remoteAudio.autoplay = true;
-    remoteAudio.muted = false;
-    remoteAudio.classList.add("roomBound");
-
-    let pfp: HTMLImageElement | SVGSVGElement;
-    console.log("pfp url: ", pfpUrl);
-    if (pfpUrl != "" && pfpUrl != undefined) {
-        pfp = document.createElement("img");
-        pfp.classList.add("pfp");
-        pfp.height = 64;
-        pfp.width = 64;
-        pfp.src = pfpUrl;
-    } else {
-        pfp = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "svg"
-        );
-
-        pfp.classList.add("pfp");
-        pfp.setAttribute("width", "70");
-        pfp.setAttribute("height", "70");
-
-        pfp.style.borderRadius = "50%";
-        pfp.style.overflow = "hidden";
-    }
-
-    const latency = document.createElement("div");
-    latency.id = "latency-" + id;
-    latency.innerText = username;
-    latency.style.textAlign = "center";
-    latency.classList.add("latency");
-
-
-    if (UIManager.appUI.peerContainer) {
-        peerVisualizationContainer.append(remoteAudio, remoteVideo);
-        if (pfpUrl == "" || pfpUrl == undefined) jdenticon.update(pfp, username);
-        peerVisualizationContainer.append(pfp);
-        peerContainer.append(peerVisualizationContainer);
-        peerContainer.append(latency);
-        UIManager.appUI.peerContainer.appendChild(peerContainer);
-    }
-
-    return [remoteAudio, remoteVideo];
-
 }
 
 /**
@@ -175,7 +112,9 @@ export async function InitPeerConnection(signaling: Signaling, id: string, peerC
             pannerInterval = HandleNewReceivedStream(ev.streams[0], remoteAudio, remoteVideo, id, clientPositions, peerPositions, signaling);
         };
 
-        InitStatsInterval(signaling, peerConnection, id);
+        // uncomment the following line to enable statistics gathering
+        // Download Stats button has to be enabled as well
+        // InitStatsInterval(signaling, peerConnection, id);
 
     } catch (e) {
         console.log(e);

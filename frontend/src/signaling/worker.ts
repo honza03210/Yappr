@@ -3,6 +3,7 @@ import {io} from "socket.io-client";
 import {ServerConfig} from "../configs/server-config";
 
 /**
+ * Currently unused, may be used to offload the networking into a separate thread in the future
  * Shared worker running on another thread used to offload network communication from the main JavaScript thread
  * @param event
  */

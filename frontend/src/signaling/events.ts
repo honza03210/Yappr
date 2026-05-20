@@ -5,6 +5,9 @@ import {InitPeerConnection} from "../audio/peer-connection";
 
 type EventHandler = (signaling: Signaling, data: any) => void | Promise<void>;
 
+/**
+ * The handlers of events signaling may receive
+ */
 const eventHandlers: {[name: string]: EventHandler} = {
     connected: () => {
         console.log("Successfully connected to the signaling server!");
@@ -92,6 +95,12 @@ const eventHandlers: {[name: string]: EventHandler} = {
     },
 };
 
+/**
+ * Dispatches the corresponding signaling event
+ * @param signaling
+ * @param eventName
+ * @param eventData
+ */
 export async function dispatchSignalingEvent(signaling: Signaling, eventName: string, eventData: any) {
     if (signaling.peerConnections == null || signaling.IceCandidateQueue == null) {
         console.error("Skipping signaling event handling: ", signaling.peerConnections, signaling.IceCandidateQueue);
