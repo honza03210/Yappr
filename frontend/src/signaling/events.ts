@@ -22,9 +22,10 @@ const eventHandlers: { [name: string]: EventHandler } = {
         await HandleUserDisconnect(data.id, signaling.peerConnections!, signaling.clientPositions, signaling);
     },
 
-    error: (_, data) => {
+    error: (signaling, data) => {
         console.error("Error: " + data.message);
         UIManager.appUI.errorMsgLabel.innerHTML = data.message;
+        UIManager.EnableJoinButton(signaling.peerConnections!, signaling.peerPositions!, signaling.clientPositions!, signaling);
     },
 
     listRooms: (_, data) => {

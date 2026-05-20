@@ -7,7 +7,6 @@ import {ClientPositions, Position} from "../position/client-positions";
 /**
  * Called when the user requests to join a room.
  * Rebinds the signaling and sends a join message.
- * Disables input fields
  * @param signaling
  * @param peerConnections
  * @param peerPositions
@@ -38,10 +37,6 @@ export function RoomJoin(signaling: Signaling, peerConnections: {
             pfpUrl: UIManager.pfpUrl
         }, type: "join"
     });
-
-    UIManager.appUI.nameInput.disabled = true;
-    UIManager.appUI.roomIDInput.disabled = true;
-    UIManager.appUI.passwordInput.disabled = true;
 }
 
 
