@@ -15,8 +15,6 @@ import {ClientPositions, Position} from "../position/client-positions";
 export function RoomJoin(signaling: Signaling, peerConnections: {
     [id: string]: PeerConnection
 }, peerPositions: {[id: string]: Position}, positionsSocket: ClientPositions) {
-    console.log("roomJoin");
-
     let IceCandidateQueue: {
         [key: string]: {
             popped: boolean,
@@ -42,8 +40,6 @@ export function RoomJoin(signaling: Signaling, peerConnections: {
     UIManager.appUI.nameInput.disabled = true;
     UIManager.appUI.roomIDInput.disabled = true;
     UIManager.appUI.passwordInput.disabled = true;
-
-    console.log("join posted");
 }
 
 
@@ -88,7 +84,6 @@ export async function useQueuedCandidates (peerConnections: { [p: string]: PeerC
         iceCandidateQueue[id] = {popped: true, queue: []};
     }
     for (const cand of iceCandidateQueue[id]!.queue) {
-        console.log("popped from queue");
         await peerConnections[id]!.addIceCandidate(new RTCIceCandidate(cand.candidate));
     }
     iceCandidateQueue[id] = {popped: true, queue: []};

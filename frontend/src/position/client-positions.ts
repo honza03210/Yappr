@@ -85,7 +85,6 @@ export class ClientPositions extends Position {
      * @constructor
      */
     BindWebSocketMessages() {
-        console.log("BindWebSocketMessages", this.communicator);
         if (!this.communicator) {
             return;
         }
@@ -97,7 +96,6 @@ export class ClientPositions extends Position {
             if (!event.data) {
                 return;
             }
-            console.log("Received:", event.data);
             let data = event.data.split(";");
 
             // this will be handled and bound upon data channel creation with every peer
@@ -164,6 +162,5 @@ export class ClientPositions extends Position {
                 }, 5000)
             this.communicator = null;
         });
-        console.log("EndBindWebSocketMessages");
     }
 }

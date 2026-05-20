@@ -19,7 +19,6 @@ export class SignalingTransport {
 
     close() {
         this.communicator.close();
-        console.log("signaling closed");
     }
 
     bindEvents(onEvent: SignalingEventHandler) {

@@ -141,7 +141,6 @@ export class UIManager {
         let joinButton = document.getElementById("joinRoomButton") as HTMLButtonElement;
 
         if (!this.buttonsBound) {
-            console.log("join button bound");
             joinButton.addEventListener('click', e => {
                 joinButton.style.display = "none";
                 document.getElementById("3DInitButton")!.style.display = "none";

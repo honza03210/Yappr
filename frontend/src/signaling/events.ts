@@ -38,12 +38,10 @@ const eventHandlers: {[name: string]: EventHandler} = {
         const peerConnections = signaling.peerConnections!;
         const queue = signaling.IceCandidateQueue!;
         if (!peerConnections[data.id]) {
-            console.warn("getCandidate: no peer connection for", data.id);
+            console.error("getCandidate: no peer connection for", data.id);
             return;
         }
-        console.log("ICECANDIDATE:", data);
         if (queue[data.id] && queue[data.id]!.popped) {
-            console.log("getCandidate", data.candidate.candidate);
             peerConnections[data.id]!.addIceCandidate(new RTCIceCandidate(data.candidate.candidate)).then(() => {
                 console.log("candidate add success");
             });
@@ -53,25 +51,17 @@ const eventHandlers: {[name: string]: EventHandler} = {
             console.log("Initiated queue");
         }
         queue[data.id]!.queue.push(data.candidate);
-        console.log("getCandidate -- pushed to queue: ", data.candidate);
     },
 
     listUsers: (signaling, data) => {
         console.log("listUsers: ", data);
-        console.log("listUsers check finished", signaling.peerConnections);
     },
 
     getOffer: async (signaling, data) => {
-        console.log("OFFER:", data);
-        console.log("get offer:" + data.sdp, data.pfpUrl);
-        console.log("awaiting credentials");
         await signaling.credentialsReady;
-        console.log("credentials ready");
         await InitPeerConnection(signaling, data.id, signaling.peerConnections!, signaling.peerPositions!, signaling.clientPositions!, false, data.username, data.pfpUrl);
-        console.log("Initiated connection", signaling.peerConnections![data.id]!);
         await signaling.peerConnections![data.id].CreateAnswer(signaling, data.sdp, data.id);
         await useQueuedCandidates(signaling.peerConnections!, signaling.IceCandidateQueue, data.id);
-        console.log("Created answer", signaling.peerConnections![data.id]!);
     },
 
     getAnswer: async (signaling, data) => {
@@ -80,21 +70,16 @@ const eventHandlers: {[name: string]: EventHandler} = {
             console.warn("getAnswer: no peer connection for", data.id);
             return;
         }
-        console.log("ANSWER:", data);
-        console.log("get answer:" + data.sdp);
         if (!pc.remoteDescription || !pc.remoteDescription.type) {
-            console.log("setting remote desc after getting an answer");
             await pc.setRemoteDescription(data.sdp);
             await useQueuedCandidates(signaling.peerConnections!, signaling.IceCandidateQueue, data.id);
         }
     },
 
     PeerJoined: async (signaling, data) => {
-        console.log("Peer joined: " + data.id, "Awaiting credentials");
         await signaling.credentialsReady;
-        console.log("credentials ready");
         if (signaling.peerConnections![data.id]) {
-            console.log("peer already connected");
+            console.error("peer already connected");
             return;
         }
         await InitPeerConnection(signaling, data.id, signaling.peerConnections!, signaling.peerPositions!, signaling.clientPositions!, true, data.username, data.pfpUrl);
@@ -102,7 +87,6 @@ const eventHandlers: {[name: string]: EventHandler} = {
     },
 
     userCredentials: (signaling, data) => {
-        console.log("userCredentials received: ", data);
         signaling.IceServers = data.credentials;
         signaling.notifyCredentialsReady();
     },
@@ -113,10 +97,9 @@ export async function dispatchSignalingEvent(signaling: Signaling, eventName: st
         console.error("Skipping signaling event handling: ", signaling.peerConnections, signaling.IceCandidateQueue);
         return;
     }
-    console.log("EventName: ", eventName);
     const handler = eventHandlers[eventName];
     if (!handler) {
-        console.log("Undefined message received: ", eventName, eventData);
+        console.error("Undefined message received: ", eventName, eventData);
         return;
     }
     await handler(signaling, eventData);

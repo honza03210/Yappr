@@ -14,7 +14,6 @@ const urlParams = new URLSearchParams(window.location.search);
 let clientPositions = new ClientPositions(urlParams.get("websocket_address") ?? "ws://localhost:4242");
 
 if (urlParams.get("user_token") != null && clientPositions.communicator instanceof WebSocket) {
-    console.log("token sending", clientPositions.communicator);
     if (clientPositions.communicator.readyState === WebSocket.OPEN) {
         clientPositions.Send(JSON.stringify({token: urlParams.get("user_token")}));
     } else {
