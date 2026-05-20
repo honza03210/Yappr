@@ -15,8 +15,6 @@ import {ServerConfig} from "../configs/server-config";
         withCredentials: true,
     });
 
-    console.log("[SharedWorker] New tab connected");
-
     port!.onmessage = (msgEvent) => {
         signalingSocket.emit(msgEvent.data.type, msgEvent.data.message);
     };

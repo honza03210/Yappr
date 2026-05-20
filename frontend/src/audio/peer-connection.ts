@@ -1,33 +1,27 @@
 import {Signaling} from "../signaling/signaling";
-import {UIManager} from "../ui/ui-manager";
+import {CreatePeerUI, UIManager} from "../ui/ui-manager";
 import {ClientPositions, Position} from "../position/client-positions";
-import * as jdenticon from "jdenticon";
 import {BindPositionsChannel} from "./data-channels";
 import {StatSample} from "./stat-sample";
 import {HandleNewReceivedStream} from "./stream-handling";
-import {CreatePeerUI} from "../ui/ui-manager";
 
 /**
  * Class taking care of the connection between the peers - used to abstract Offer/Answer exchange
  */
 export class PeerConnection extends RTCPeerConnection {
     async CreateOffer(signaling: Signaling, destID: string) {
-        console.log("create offer");
-        this
-            .createOffer({offerToReceiveAudio: true, offerToReceiveVideo: false})
+        this.createOffer({offerToReceiveAudio: true, offerToReceiveVideo: false})
             .then(async sdp => {
                 await this.setLocalDescription(sdp);
                 signaling.Send({type: "offer", payload: {dest: destID, sdp: sdp, pfpUrl: UIManager.pfpUrl}});
             })
             .catch(error => {
-                console.log(error);
+                console.error(error);
             });
     }
 
     async CreateAnswer(signaling: Signaling, sdp: string | RTCSessionDescription, destID: string) {
-        console.log("create answer");
         this.setRemoteDescription(<RTCSessionDescriptionInit>sdp).then(() => {
-            console.log("answer set remote description success");
             this
                 .createAnswer({
                     offerToReceiveVideo: false,
@@ -38,7 +32,7 @@ export class PeerConnection extends RTCPeerConnection {
                     signaling.Send({type: "answer", payload: {dest: destID, sdp: sdp1}})
                 })
                 .catch(error => {
-                    console.log(error);
+                    console.error(error);
                 });
         });
     }
@@ -58,17 +52,20 @@ export class PeerConnection extends RTCPeerConnection {
  */
 export async function InitPeerConnection(signaling: Signaling, id: string, peerConnections: {
     [p: string]: PeerConnection
-}, peerPositions: {[p: string]: Position}, clientPositions: ClientPositions, offer: boolean, username: string, pfpUrl: string) {
+}, peerPositions: {
+    [p: string]: Position
+}, clientPositions: ClientPositions, offer: boolean, username: string, pfpUrl: string) {
     if (id in peerConnections) {
-        console.log("id already in peer connections")
+        console.error("id already in peer connections")
         return;
     }
 
-    console.log("PeerConn init with ", signaling.IceServers);
-    let peerConnection: PeerConnection = new PeerConnection({iceServers: signaling.IceServers, iceTransportPolicy: "all"});
+    let peerConnection: PeerConnection = new PeerConnection({
+        iceServers: signaling.IceServers,
+        iceTransportPolicy: "all"
+    });
     signaling.peerRunningIntervals[id] = [];
     clientPositions.SendServerEvent(`PLAYER_JOIN;${username};${id}`);
-    console.log("render videos");
     try {
         let [remoteAudio, remoteVideo] = CreatePeerUI(id, pfpUrl, username);
         let stream = UIManager.appUI.localAudioStream!
@@ -79,13 +76,11 @@ export async function InitPeerConnection(signaling: Signaling, id: string, peerC
 
         // Positions data stream init.
         if (offer) {
-            console.log("creating data channel");
             let dc = peerConnection.createDataChannel("positions", {ordered: false, maxRetransmits: 0});
             BindPositionsChannel(dc, id, clientPositions, peerPositions);
         } else {
             peerConnection.ondatachannel = (e) => {
-                console.log("got data channel");
-                if (e.channel.label == "positions"){
+                if (e.channel.label == "positions") {
                     let dc = e.channel;
                     BindPositionsChannel(dc, id, clientPositions, peerPositions);
                 }
@@ -93,9 +88,7 @@ export async function InitPeerConnection(signaling: Signaling, id: string, peerC
         }
 
         peerConnection.onicecandidate = e => {
-            console.log("onicecandidate");
             if (e.candidate === null) return;
-            console.log("candidate: " + e.candidate);
             signaling.Send({
                 payload: {
                     dest: id, candidate: e.candidate
@@ -117,9 +110,8 @@ export async function InitPeerConnection(signaling: Signaling, id: string, peerC
         // InitStatsInterval(signaling, peerConnection, id);
 
     } catch (e) {
-        console.log(e);
+        console.error(e);
     }
-    console.log("set new peerConnection");
     peerConnections[id] = peerConnection;
 }
 
@@ -152,8 +144,7 @@ function InitStatsInterval(signaling: Signaling, peerConnection: PeerConnection,
                 signaling.peerStats![id] = [];
             }
             signaling.peerStats![id].push(sample);
-        }
-        catch(e: any){
+        } catch (e: any) {
             console.error(e);
         }
     }, 1000);

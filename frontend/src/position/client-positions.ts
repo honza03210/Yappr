@@ -8,7 +8,7 @@ export class Position {
     x: number = 0;
     y: number = 0;
     z: number = 0;
-    heading: {x: number, y : number, z : number} = {x: 0, y: 0, z : 0};
+    heading: { x: number, y: number, z: number } = {x: 0, y: 0, z: 0};
     pitch: number = 90;
     yaw: number = 0;
     PositionFormat: string | null = null;
@@ -17,7 +17,7 @@ export class Position {
 
 function getHeadingVector(pitch: number, yaw: number) {
     const pitchRad = pitch * Math.PI / 180;
-    const yawRad   = yaw * Math.PI / 180;
+    const yawRad = yaw * Math.PI / 180;
 
     const x = Math.cos(pitchRad) * Math.sin(yawRad);
     const y = Math.sin(pitchRad);
@@ -39,6 +39,7 @@ export class ClientPositions extends Position {
     parentWindow: Window | null = null;
     sendPeerPositionsBack: boolean = false;
     address: string | null = null;
+
     constructor(communicator: string | Window) {
         super();
         if (typeof communicator === "string") {
@@ -58,7 +59,7 @@ export class ClientPositions extends Position {
      * @constructor
      */
     public Send(data: string) {
-        if (!this.communicator){
+        if (!this.communicator) {
             return;
         }
 
@@ -102,7 +103,7 @@ export class ClientPositions extends Position {
             if (data[0] == "GAME_EVENT") return;
 
             if (data[0] == "SERVER_EVENT") {
-                switch (data[1]){
+                switch (data[1]) {
                     case "SEND_PEER_POSITIONS":
                         this.sendPeerPositionsBack = data[2] == "true";
                         break;
@@ -116,7 +117,7 @@ export class ClientPositions extends Position {
                 // This is a simplification done only for positions for Minecraft
                 // this is not a sustainable way to handle positions, the game integrations
                 // should be the ones handling conversion into WebAudio format
-                if (this.PositionFormat == "mc"){
+                if (this.PositionFormat == "mc") {
                     this.x = parseFloat(data[1]);
                     this.y = parseFloat(data[2]);
                     this.z = -parseFloat(data[3]);
@@ -125,8 +126,7 @@ export class ClientPositions extends Position {
                     this.yaw = Math.max(Math.min(360, parseFloat(data[5])), -180);
 
                     this.heading = GetMinecraftHeadingVector(this.pitch, this.yaw);
-                }
-                else {
+                } else {
                     this.x = parseFloat(data[1]);
                     this.y = parseFloat(data[2]);
                     this.z = parseFloat(data[3]);
@@ -147,7 +147,6 @@ export class ClientPositions extends Position {
         });
 
         this.communicator.addEventListener("close", () => {
-            console.log("Connection closed");
             this.PositionFormat = null;
             this.communicator = null;
         });
@@ -160,7 +159,7 @@ export class ClientPositions extends Position {
             setTimeout(() => {
                 this.communicator = new WebSocket(this.address!);
                 this.BindWebSocketMessages();
-                }, 5000)
+            }, 5000)
             this.communicator = null;
         });
     }

@@ -12,7 +12,8 @@ export class Format {
     yawMax: number;
     yawMin: number;
     yawZero: string;
-    constructor(label: string, up: string, right: string, front: string, pitchMax: number, pitchMin: number, yawMax:number, yawMin: number, yawZero: string) {
+
+    constructor(label: string, up: string, right: string, front: string, pitchMax: number, pitchMin: number, yawMax: number, yawMin: number, yawZero: string) {
         this.label = label;
         this.up = up;
         this.right = right;
@@ -27,6 +28,7 @@ export class Format {
 
 export class PositionFormats {
     static formats: Map<string, Format> = new Map();
+
     constructor() {
         PositionFormats.formats.set("mc", new Format(
             "mc",
@@ -52,9 +54,9 @@ export class PositionFormats {
     }
 }
 
-export function ConvertFormatToWebAudio(label: string, x: number, y: number, z: number, pitch: number, yaw: number){
+export function ConvertFormatToWebAudio(label: string, x: number, y: number, z: number, pitch: number, yaw: number) {
     const format: Format | undefined = PositionFormats.formats.get(label);
-    if (format === undefined){
+    if (format === undefined) {
         throw new Error("Unknown format");
     }
 

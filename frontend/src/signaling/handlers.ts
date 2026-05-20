@@ -16,7 +16,7 @@ import {ClientPositions, Position} from "../position/client-positions";
  */
 export function RoomJoin(signaling: Signaling, peerConnections: {
     [id: string]: PeerConnection
-}, peerPositions: {[id: string]: Position}, positionsSocket: ClientPositions) {
+}, peerPositions: { [id: string]: Position }, positionsSocket: ClientPositions) {
     let IceCandidateQueue: {
         [key: string]: {
             popped: boolean,
@@ -53,7 +53,9 @@ export function RoomJoin(signaling: Signaling, peerConnections: {
  * @param signaling
  * @constructor
  */
-export async function HandleUserDisconnect(userID: string, peerConnections: {[key: string] : PeerConnection}, clientPositions: ClientPositions | null, signaling: Signaling) {
+export async function HandleUserDisconnect(userID: string, peerConnections: {
+    [key: string]: PeerConnection
+}, clientPositions: ClientPositions | null, signaling: Signaling) {
     document.getElementById("peerContainer-" + userID)?.remove();
     document.getElementById("remoteVideo-" + userID)?.remove();
     document.getElementById("remoteAudio-" + userID)?.remove();
@@ -67,10 +69,10 @@ export async function HandleUserDisconnect(userID: string, peerConnections: {[ke
     delete signaling.peerRunningIntervals[userID];
     clientPositions?.SendServerEvent(`PLAYER_LEFT;${userID}`);
     setTimeout(() => {
-      if (!peerConnections[userID]) {
-          delete signaling.peerStats![userID];
-          delete signaling.peerPositions![userID];
-      }
+        if (!peerConnections[userID]) {
+            delete signaling.peerStats![userID];
+            delete signaling.peerPositions![userID];
+        }
     }, 180);
 }
 
@@ -81,7 +83,9 @@ export async function HandleUserDisconnect(userID: string, peerConnections: {[ke
  * @param iceCandidateQueue
  * @param id
  */
-export async function useQueuedCandidates (peerConnections: { [p: string]: PeerConnection }, iceCandidateQueue:any, id: string) {
+export async function useQueuedCandidates(peerConnections: {
+    [p: string]: PeerConnection
+}, iceCandidateQueue: any, id: string) {
     if (!iceCandidateQueue[id]) {
         iceCandidateQueue[id] = {popped: true, queue: []};
     }

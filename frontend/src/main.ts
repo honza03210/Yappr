@@ -1,6 +1,5 @@
 import {UIManager} from "./ui/ui-manager";
-import {ClientPositions, Position} from "./position/client-positions";
-import * as jdenticon from "jdenticon"
+import {ClientPositions} from "./position/client-positions";
 
 /**
  * Entry file for the main voice chat client page

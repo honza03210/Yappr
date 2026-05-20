@@ -1,5 +1,4 @@
 import {ClientPositions, Position} from "../position/client-positions";
-import {UIManager} from "../ui/ui-manager";
 
 /**
  * Binding positions data stream to actual position objects to read from
@@ -9,30 +8,29 @@ import {UIManager} from "../ui/ui-manager";
  * @param peerPositions
  * @constructor
  */
-export function BindPositionsChannel(dc: RTCDataChannel, id: string, clientPositions : ClientPositions, peerPositions: {[p: string]: Position}) {
+export function BindPositionsChannel(dc: RTCDataChannel, id: string, clientPositions: ClientPositions, peerPositions: {
+    [p: string]: Position
+}) {
     if (clientPositions.communicator) {
         clientPositions.communicator!.addEventListener("message", (event: any) => {
             if (!event.data) {
                 return;
             }
-            console.log("Received:", event.data);
             let data = event.data.split(";");
             if (data[0] == "GAME_EVENT" && dc.readyState == "open") {
-                console.log("Sent GAME_EVENT message: ", event.data);
                 dc.send(event.data);
                 return;
             }
         });
     }
 
-    function startPositionsLoop(){
-        console.log("DataChannel open");
+    function startPositionsLoop() {
         peerPositions[id] = new Position();
-        console.log("peerPositions:", id, peerPositions[id]);
         let lastPosition = "";
+
         function sendPos() {
             setTimeout(() => {
-                if (lastPosition != clientPositions.RawPositions){
+                if (lastPosition != clientPositions.RawPositions) {
                     dc.send(clientPositions.PositionFormat + ";" + clientPositions.RawPositions);
                     lastPosition = clientPositions.RawPositions;
                 }
@@ -40,6 +38,7 @@ export function BindPositionsChannel(dc: RTCDataChannel, id: string, clientPosit
                 sendPos()
             }, 50)
         }
+
         setTimeout(sendPos, 50);
     }
 
@@ -53,7 +52,6 @@ export function BindPositionsChannel(dc: RTCDataChannel, id: string, clientPosit
         let data = event.data.split(";");
         let format = data[0];
         if (format == "GAME_EVENT" && clientPositions.communicator) {
-            console.log("Received GAME_EVENT message: ", event.data);
             clientPositions.Send(event.data);
             return;
         }
@@ -63,7 +61,7 @@ export function BindPositionsChannel(dc: RTCDataChannel, id: string, clientPosit
             // Minecraft is the only format that doesn't need to transform the coordinates in the game
             // In the future, all games will need to transform the positions themselves, as keeping format
             // converters here just is not sustainable
-            if (format == "mc"){
+            if (format == "mc") {
                 peerPositions[id].x = parseFloat(data[1]);
                 peerPositions[id].y = parseFloat(data[2]);
                 peerPositions[id].z = -parseFloat(data[3]);

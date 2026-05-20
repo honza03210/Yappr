@@ -34,6 +34,7 @@ export function BindStreamAnimation(stream: MediaStream, audioCtx: AudioContext)
         DrawSoundVisualization(canvasCtx, WIDTH, HEIGHT, analyser, dataArray, backgroundColor, strokeColor, bufferLength, null);
         requestAnimationFrame(draw);
     }
+
     requestAnimationFrame(draw);
 }
 
@@ -54,7 +55,7 @@ export function BindStreamAnimation(stream: MediaStream, audioCtx: AudioContext)
  * @constructor
  */
 
-export function DrawSoundVisualization(canvasCtx: CanvasRenderingContext2D, WIDTH: number, HEIGHT: number, analyser: AnalyserNode, dataArray: Uint8Array<ArrayBuffer>, remoteVideoColor: string, remoteVideoStroke: string, bufferLength: number, name: string | null, complex: boolean = true) : boolean{
+export function DrawSoundVisualization(canvasCtx: CanvasRenderingContext2D, WIDTH: number, HEIGHT: number, analyser: AnalyserNode, dataArray: Uint8Array<ArrayBuffer>, remoteVideoColor: string, remoteVideoStroke: string, bufferLength: number, name: string | null, complex: boolean = true): boolean {
     if (!CanvasRenderingContext2D) {
         return false;
     }
@@ -75,7 +76,7 @@ export function DrawSoundVisualization(canvasCtx: CanvasRenderingContext2D, WIDT
  * @param remoteVideoStroke
  * @param name
  */
-function visualizationCircular(canvasCtx: CanvasRenderingContext2D, WIDTH: number, HEIGHT: number, analyser: AnalyserNode, dataArray: Uint8Array<ArrayBuffer>, remoteVideoStroke: string, name: string | null){
+function visualizationCircular(canvasCtx: CanvasRenderingContext2D, WIDTH: number, HEIGHT: number, analyser: AnalyserNode, dataArray: Uint8Array<ArrayBuffer>, remoteVideoStroke: string, name: string | null) {
     analyser.getByteTimeDomainData(dataArray);
 
     canvasCtx.clearRect(0, 0, WIDTH, WIDTH);

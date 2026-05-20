@@ -1,6 +1,6 @@
 import {Socket} from "socket.io-client";
 
-export type SignalingMessage = {type: string, payload?: any};
+export type SignalingMessage = { type: string, payload?: any };
 export type SignalingEventHandler = (eventName: string, eventData: any) => void | Promise<void>;
 
 /**
@@ -8,7 +8,10 @@ export type SignalingEventHandler = (eventName: string, eventData: any) => void 
  * instead of Socket.IO
  */
 export class SignalingTransport {
-    constructor(public communicator: Socket | MessagePort) {}
+    private handlerRef: SignalingEventHandler | null = null;
+
+    constructor(public communicator: Socket | MessagePort) {
+    }
 
     /**
      * Sends a message to the communicator
@@ -50,7 +53,6 @@ export class SignalingTransport {
         }
     }
 
-    private handlerRef: SignalingEventHandler | null = null;
     private messageHandler = async (event: any) => {
         if (!event.data || !event.data.type) {
             console.error("signaling received invalid message: ", event);

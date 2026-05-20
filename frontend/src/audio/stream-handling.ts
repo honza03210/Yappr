@@ -1,4 +1,3 @@
-import {PeerConnection} from "./peer-connection";
 import {ClientPositions, Position} from "../position/client-positions";
 import {UIManager} from "../ui/ui-manager";
 import {DrawSoundVisualization, StringToColor} from "../ui/visualization";
@@ -16,7 +15,9 @@ import {SetPanNodeParams} from "../configs/panner-config";
  * @param signaling
  * @constructor
  */
-export function HandleNewReceivedStream(stream: MediaStream, remoteAudio: HTMLAudioElement, remoteVideo: HTMLCanvasElement, id: string, clientPositions: ClientPositions, peerPositions: {[p: string]: Position}, signaling: Signaling) {
+export function HandleNewReceivedStream(stream: MediaStream, remoteAudio: HTMLAudioElement, remoteVideo: HTMLCanvasElement, id: string, clientPositions: ClientPositions, peerPositions: {
+    [p: string]: Position
+}, signaling: Signaling) {
     if (remoteAudio) {
         remoteAudio.muted = true;
         remoteAudio.srcObject = stream;
@@ -41,12 +42,10 @@ export function HandleNewReceivedStream(stream: MediaStream, remoteAudio: HTMLAu
 
     remoteVideo.onclick = () => {
         if (muted) {
-            console.log("unmuted");
             remoteVideoColor = "rgba(141,141,141, 0.05)";
             muted = false;
             analyser.connect(audioCtx!.destination);
         } else {
-            console.log("muted");
             remoteVideoColor = "rgba(255,0,0,0.28)";
             muted = true;
             analyser.disconnect(audioCtx!.destination);
@@ -62,7 +61,7 @@ export function HandleNewReceivedStream(stream: MediaStream, remoteAudio: HTMLAu
     const HEIGHT = remoteVideo.height;
 
     function draw() {
-        if (DrawSoundVisualization(canvasCtx, WIDTH, HEIGHT, analyser, dataArray, remoteVideoColor, remoteVideoStroke, bufferLength, id)){
+        if (DrawSoundVisualization(canvasCtx, WIDTH, HEIGHT, analyser, dataArray, remoteVideoColor, remoteVideoStroke, bufferLength, id)) {
             requestAnimationFrame(draw);
         }
     }
@@ -82,8 +81,10 @@ export function HandleNewReceivedStream(stream: MediaStream, remoteAudio: HTMLAu
  * @param id
  * @constructor
  */
-export function UpdatePannerNodeFromPositions(panner: PannerNode, clientPositions: ClientPositions, peerPositions: {[p: string]: Position}, id: string) {
-    if (!peerPositions[id]){
+export function UpdatePannerNodeFromPositions(panner: PannerNode, clientPositions: ClientPositions, peerPositions: {
+    [p: string]: Position
+}, id: string) {
+    if (!peerPositions[id]) {
         return;
     }
 

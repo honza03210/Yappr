@@ -8,24 +8,22 @@ type EventHandler = (signaling: Signaling, data: any) => void | Promise<void>;
 /**
  * The handlers of events signaling may receive
  */
-const eventHandlers: {[name: string]: EventHandler} = {
+const eventHandlers: { [name: string]: EventHandler } = {
     connected: () => {
-        console.log("Successfully connected to the signaling server!");
+        console.log("Successfully connected to the signaling server");
     },
 
     roomConnected: (signaling, data) => {
         UIManager.inRoom = true;
         UIManager.EnableDisconnectButton(signaling);
-        console.log("Successfully connected to room " + data.roomID);
     },
 
     userDisconnected: async (signaling, data) => {
         await HandleUserDisconnect(data.id, signaling.peerConnections!, signaling.clientPositions, signaling);
-        console.log("disconnect:" + data);
     },
 
     error: (_, data) => {
-        console.log("Error: " + data.message);
+        console.error("Error: " + data.message);
         UIManager.appUI.errorMsgLabel.innerHTML = data.message;
     },
 
@@ -45,13 +43,11 @@ const eventHandlers: {[name: string]: EventHandler} = {
             return;
         }
         if (queue[data.id] && queue[data.id]!.popped) {
-            peerConnections[data.id]!.addIceCandidate(new RTCIceCandidate(data.candidate.candidate)).then(() => {
-                console.log("candidate add success");
+            peerConnections[data.id]!.addIceCandidate(new RTCIceCandidate(data.candidate.candidate)).then(r => {
             });
             return;
         } else if (!queue[data.id]) {
             queue[data.id] = {popped: false, queue: []};
-            console.log("Initiated queue");
         }
         queue[data.id]!.queue.push(data.candidate);
     },

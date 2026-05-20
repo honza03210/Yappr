@@ -22,11 +22,11 @@ export class Signaling {
             }[]
         }
     } | null = null;
-    peerConnections: {[key: string] : PeerConnection} | null = null;
-    peerPositions: {[p: string]: Position} | null = null;
+    peerConnections: { [key: string]: PeerConnection } | null = null;
+    peerPositions: { [p: string]: Position } | null = null;
     clientPositions: ClientPositions | null = null;
-    peerStats: {[p: string]: StatSample[]} | null = null;
-    peerRunningIntervals: {[p: string]: number[]} = {};
+    peerStats: { [p: string]: StatSample[] } | null = null;
+    peerRunningIntervals: { [p: string]: number[] } = {};
     readonly credentialsReady: Promise<void>;
     private resolveCredentials!: () => void;
 
@@ -52,7 +52,7 @@ export class Signaling {
                    [p: string]: { popped: boolean; queue: { candidate: RTCIceCandidate; sdpMid: string; sdpMLineIndex: number }[] }
                },
                peerConnections: { [p: string]: PeerConnection },
-               peerPositions: {[p: string]: Position},
+               peerPositions: { [p: string]: Position },
                clientPositions: ClientPositions) {
         this.IceCandidateQueue = IceCandidateQueue;
         this.clientPositions = clientPositions;

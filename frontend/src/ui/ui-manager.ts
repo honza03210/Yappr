@@ -7,7 +7,6 @@ import {Signaling} from "../signaling/signaling";
 import {ClientPositions, Position} from "../position/client-positions";
 import {BindStreamAnimation} from "./visualization";
 import * as jdenticon from "jdenticon";
-import {BindPositionsChannel} from "../audio/data-channels";
 
 /**
  * Class that takes care of all the frontend UI update logic and state
@@ -38,7 +37,7 @@ export class UIManager {
     /**
      * reads the pfp_url from the url and displays it
      */
-    static setPfp(){
+    static setPfp() {
         const urlParams = new URLSearchParams(window.location.search);
 
         UIManager.pfpUrl = urlParams.get("pfp_url") ?? "";
@@ -90,7 +89,9 @@ export class UIManager {
      * @param positionsSocket
      * @constructor
      */
-    static async EnableInitButton(peerConnections: { [p: string]: PeerConnection }, peerPositions: {[p: string]: Position}, positionsSocket: ClientPositions) {
+    static async EnableInitButton(peerConnections: { [p: string]: PeerConnection }, peerPositions: {
+        [p: string]: Position
+    }, positionsSocket: ClientPositions) {
         let comm = io(ServerConfig.url, {
             transports: ['websocket', 'polling'],
             withCredentials: true,
@@ -123,7 +124,7 @@ export class UIManager {
     /**
      * Initializes the user audio and its visualization
      */
-    static async initAudio(){
+    static async initAudio() {
         this.appUI.audioCtx = new AudioContext();
         const stream = await navigator.mediaDevices
             .getUserMedia({
@@ -144,9 +145,9 @@ export class UIManager {
      * Updates the list of rooms from the provided roomsList
      * @param roomsList
      */
-    static updateRoomsList(roomsList: any){
+    static updateRoomsList(roomsList: any) {
         document.getElementById("rooms-list")?.replaceChildren(...roomsList.map(
-            (room: {roomID : string, numberOfUsers: number}) => {
+            (room: { roomID: string, numberOfUsers: number }) => {
                 let div = document.createElement("div");
                 div.innerText = `${room.roomID} : ${room.numberOfUsers} users connected`;
                 let button = document.createElement("button");
@@ -168,7 +169,9 @@ export class UIManager {
      * @param signaling
      * @constructor
      */
-    static EnableJoinButton(peerConnections: { [p: string]: PeerConnection }, peerPositions: {[p: string]: Position}, positionsSocket: ClientPositions,
+    static EnableJoinButton(peerConnections: { [p: string]: PeerConnection }, peerPositions: {
+                                [p: string]: Position
+                            }, positionsSocket: ClientPositions,
                             signaling: Signaling) {
         let joinButton = document.getElementById("joinRoomButton") as HTMLButtonElement;
 
@@ -206,7 +209,7 @@ export class UIManager {
  */
 function DownloadStats(signaling: Signaling) {
     const jsonString = JSON.stringify(signaling.peerStats, null, 2);
-    const blob = new Blob([jsonString], { type: "application/json" });
+    const blob = new Blob([jsonString], {type: "application/json"});
     const url = URL.createObjectURL(blob);
 
     const a = document.createElement('a');
@@ -220,7 +223,7 @@ function DownloadStats(signaling: Signaling) {
 }
 
 
-export function CreatePeerUI(id: string, pfpUrl: string, username: string) : [HTMLAudioElement, HTMLCanvasElement]{
+export function CreatePeerUI(id: string, pfpUrl: string, username: string): [HTMLAudioElement, HTMLCanvasElement] {
     const peerContainer = document.createElement("div");
     peerContainer.classList.add("roomBound");
     peerContainer.style.position = "relative";
@@ -243,7 +246,6 @@ export function CreatePeerUI(id: string, pfpUrl: string, username: string) : [HT
     remoteAudio.classList.add("roomBound");
 
     let pfp: HTMLImageElement | SVGSVGElement;
-    console.log("pfp url: ", pfpUrl);
     if (pfpUrl != "" && pfpUrl != undefined) {
         pfp = document.createElement("img");
         pfp.classList.add("pfp");
