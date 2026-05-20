@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prod": "npm run prod:server",
+    "prod": "concurrently \"npm run dev:server\" \"npm run prod:frontend\"",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:frontend\"",
     "dev:server": "npm --workspace server run dev",
     "dev:frontend": "npm --workspace frontend run dev",
+    "prod:frontend": "npm --workspace frontend run prod",
     "prod:server": "npm --workspace server run prod"
   },
   "keywords": [],

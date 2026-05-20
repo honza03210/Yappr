@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "prod": "tsc",
     "dev": "tsc && vite build && vite serve --host",
     "build": "tsc && vite build",
     "preview": "vite preview",
