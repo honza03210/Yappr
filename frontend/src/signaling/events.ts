@@ -53,7 +53,9 @@ const eventHandlers: { [name: string]: EventHandler } = {
     },
 
     listUsers: (signaling, data) => {
-        console.log("listUsers: ", data);
+        // could be used for reestablishing connections that failed, right now it would only put
+        // a strain on the overloaded TURN server, which is the only reason, why some connections
+        // failed
     },
 
     getOffer: async (signaling, data) => {
