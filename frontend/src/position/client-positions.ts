@@ -59,15 +59,15 @@ export class ClientPositions extends Position {
      * @constructor
      */
     public Send(data: string) {
-        if (!this.communicator) {
-            return;
-        }
-
-        if (this.communicator instanceof WebSocket && this.communicator.readyState == WebSocket.OPEN) {
-            this.communicator.send(data)
-        } else if (this.communicator instanceof Window) {
-            this.parentWindow!.postMessage(data, "*");
-        }
+        // if (!this.communicator) {
+        //     return;
+        // }
+        //
+        // if (this.communicator instanceof WebSocket && this.communicator.readyState == WebSocket.OPEN) {
+        //     this.communicator.send(data)
+        // } else if (this.communicator instanceof Window) {
+        //     this.parentWindow!.postMessage(data, "*");
+        // }
     }
 
     /**
@@ -76,7 +76,7 @@ export class ClientPositions extends Position {
      * @constructor
      */
     SendServerEvent(data: string) {
-        this.Send("SERVER_EVENT;" + data);
+        // this.Send("SERVER_EVENT;" + data);
     }
 
 
