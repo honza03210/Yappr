@@ -97,7 +97,7 @@ export class ClientPositions extends Position {
             if (!event.data) {
                 return;
             }
-            let data = event.data.split(";");
+            let data: string[] = event.data.split(";");
 
             // this will be handled and bound upon data channel creation with every peer
             if (data[0] == "GAME_EVENT") return;

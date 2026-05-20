@@ -16,7 +16,7 @@ export function BindPositionsChannel(dc: RTCDataChannel, id: string, clientPosit
             if (!event.data) {
                 return;
             }
-            let data = event.data.split(";");
+            let data: string[] = event.data.split(";");
             if (data[0] == "GAME_EVENT" && dc.readyState == "open") {
                 dc.send(event.data);
                 return;

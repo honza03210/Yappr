@@ -1,5 +1,5 @@
 /// <reference lib="webworker" />
-import {io} from "socket.io-client";
+import {io, type Socket} from "socket.io-client";
 import {ServerConfig} from "../configs/server-config";
 
 /**
@@ -10,7 +10,7 @@ import {ServerConfig} from "../configs/server-config";
 (self as unknown as SharedWorkerGlobalScope).onconnect = (event: MessageEvent) => {
     const port = event.ports[0];
 
-    const signalingSocket = io(ServerConfig.url, {
+    const signalingSocket: Socket = io(ServerConfig.url, {
         transports: ['websocket', 'polling'],
         withCredentials: true,
     });

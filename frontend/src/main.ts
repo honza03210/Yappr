@@ -1,5 +1,6 @@
 import {UIManager} from "./ui/ui-manager";
-import {ClientPositions} from "./position/client-positions";
+import {ClientPositions, Position} from "./position/client-positions";
+import {PeerConnection} from "./audio/peer-connection";
 
 /**
  * Entry file for the main voice chat client page
@@ -20,8 +21,8 @@ if (urlParams.get("user_token") != null && clientPositions.communicator instance
     }
 }
 
-let peerConnections = {};
-let peerPositions = {};
+const peerConnections: { [id: string]: PeerConnection } = {};
+const peerPositions: { [id: string]: Position } = {};
 
 await UIManager.EnableInitButton(peerConnections, peerPositions, clientPositions);
 UIManager.PrefillFieldsFromUrl();

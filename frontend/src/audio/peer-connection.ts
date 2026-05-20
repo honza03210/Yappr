@@ -100,7 +100,7 @@ export async function InitPeerConnection(signaling: Signaling, id: string, peerC
             console.log(e);
         };
 
-        let pannerInterval;
+        let pannerInterval: number | undefined;
         peerConnection.ontrack = async ev => {
             pannerInterval = HandleNewReceivedStream(ev.streams[0], remoteAudio, remoteVideo, id, clientPositions, peerPositions, signaling);
         };

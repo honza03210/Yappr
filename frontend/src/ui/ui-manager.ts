@@ -1,7 +1,7 @@
 import type {AppUI} from "../interfaces/app-ui";
 import {PeerConnection} from "../audio/peer-connection";
 import {RoomJoin} from "../signaling/handlers";
-import {io} from "socket.io-client";
+import {io, type Socket} from "socket.io-client";
 import {ServerConfig} from "../configs/server-config";
 import {Signaling} from "../signaling/signaling";
 import {ClientPositions, Position} from "../position/client-positions";
@@ -92,7 +92,7 @@ export class UIManager {
     static async EnableInitButton(peerConnections: { [p: string]: PeerConnection }, peerPositions: {
         [p: string]: Position
     }, positionsSocket: ClientPositions) {
-        let comm = io(ServerConfig.url, {
+        const comm: Socket = io(ServerConfig.url, {
             transports: ['websocket', 'polling'],
             withCredentials: true,
         });
