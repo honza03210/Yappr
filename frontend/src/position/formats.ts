@@ -1,3 +1,7 @@
+/**
+ * Currently unused, the game integration should send the coordinates in the coordinate system WebAudio expects for a panner node
+ */
+
 export class Format {
     label: string;
     up: string;
@@ -34,8 +38,8 @@ export class PositionFormats {
             180,
             -180,
             "-z"));
-        PositionFormats.formats.set("std", new Format(
-            "std",
+        PositionFormats.formats.set("3d", new Format(
+            "3d",
             "+y",
             "+x",
             "+z",

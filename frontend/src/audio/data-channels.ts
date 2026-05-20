@@ -60,6 +60,9 @@ export function BindPositionsChannel(dc: RTCDataChannel, id: string, clientPosit
         peerPositions[id].PositionFormat = format;
         peerPositions[id].RawPositions = data.slice(1).join(";");
         try {
+            // Minecraft is the only format that doesn't need to transform the coordinates in the game
+            // In the future, all games will need to transform the positions themselves, as keeping format
+            // converters here just is not sustainable
             if (format == "mc"){
                 peerPositions[id].x = parseFloat(data[1]);
                 peerPositions[id].y = parseFloat(data[2]);
@@ -95,48 +98,3 @@ export function BindPositionsChannel(dc: RTCDataChannel, id: string, clientPosit
         }
     }
 }
-
-
-// /**
-//  * Binding positions data stream to actual position objects to read from
-//  * @param dc
-//  * @param userID
-//  * @constructor
-//  */
-// export function BindLatencyChannel(dc: RTCDataChannel, userID: string) {
-//     console.log("BindLatencyChannel");
-//
-//     function startPingLoop(){
-//         console.log("LatencyChannel open");
-//         function sendPing() {
-//             setTimeout(() => {
-//                 const now = Date.now();
-//                 dc.send(JSON.stringify({ type: "ping", t: now }));
-//                 sendPing()
-//             }, 1000)
-//         }
-//         setTimeout(sendPing, 1000);
-//     }
-//
-//     dc.onopen = startPingLoop;
-//
-//     if (dc.readyState === "open") {
-//         setTimeout(startPingLoop, 50);
-//     }
-//
-//     let latencyView = document.getElementById("latency-" + userID)
-//
-//     dc.onmessage = (e: { data: string }) => {
-//         const msg = JSON.parse(e.data);
-//
-//         if (msg.type === "ping") {
-//             dc.send(JSON.stringify({ type: "pong", t: msg.t }));
-//         }
-//
-//         if (msg.type === "pong") {
-//             const rtt = Date.now() - msg.t;
-//             // latencyView!.innerText = "" + rtt.toString() + " ms";
-//             console.log("Ping:", rtt, "ms");
-//         }
-//     }
-// }

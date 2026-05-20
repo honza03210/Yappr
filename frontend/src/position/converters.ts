@@ -1,6 +1,11 @@
 import {Format} from "./formats";
 
-
+/**
+ * 
+ * @param pitch
+ * @param yaw
+ * @constructor
+ */
 export function GetMinecraftHeadingVector(pitch: number, yaw: number) {
     const pitchRad = pitch * Math.PI / 180;
     const yawRad = yaw * Math.PI / 180;

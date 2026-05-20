@@ -5,7 +5,9 @@ import {ClientPositions, Position} from "../position/client-positions";
 
 
 /**
- * Called upon user requesting a room join
+ * Called when the user requests to join a room.
+ * Rebinds the signaling and sends a join message.
+ * Disables input fields
  * @param signaling
  * @param peerConnections
  * @param peerPositions

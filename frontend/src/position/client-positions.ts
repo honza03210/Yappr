@@ -115,6 +115,9 @@ export class ClientPositions extends Position {
             this.RawPositions = data.slice(1, data.length).join(";");
             try {
                 this.PositionFormat = data[0];
+                // This is a simplification done only for positions for Minecraft
+                // this is not a sustainable way to handle positions, the game integrations
+                // should be the ones handling conversion into WebAudio format
                 if (this.PositionFormat == "mc"){
                     this.x = parseFloat(data[1]);
                     this.y = parseFloat(data[2]);
@@ -135,14 +138,12 @@ export class ClientPositions extends Position {
 
                     // clamp the pitch and yaw
                     this.pitch = Math.max(Math.min(90, parseFloat(data[4])), -90);
-                    // TODO: Some engines use -180 to 180, some 0 to 360 - add this to the format?
                     this.yaw = Math.max(Math.min(360, parseFloat(data[5])), -180);
                     if (Number.isNaN(this.pitch)) this.pitch = 0;
                     if (Number.isNaN(this.yaw)) this.yaw = 0;
                     this.heading = getHeadingVector(this.pitch, this.yaw);
                 }
             } catch (e) {
-                // The websocket doesn't need to send all positions (2d games, games with no rotation,...)
                 console.error(e);
             }
         });

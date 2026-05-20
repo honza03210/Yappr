@@ -6,8 +6,8 @@ import {SignalingMessage, SignalingTransport} from "./transport";
 import {dispatchSignalingEvent} from "./events";
 
 /**
- * State container for the signaling layer. Transport details live in
- * signaling-transport.ts, per-event dispatch in signaling-events.ts.
+ * Container for the signaling layer
+ * Keeps the state of the room, peers, etc...
  */
 export class Signaling {
     IceServers: RTCIceServer[];
@@ -71,7 +71,7 @@ export class Signaling {
 
     /**
      * Resolves the credentialsReady promise. Called by the userCredentials
-     * event handler once ICE servers have arrived from the signaling server.
+     * event handler once ICE servers have arrived from the signaling server
      */
     notifyCredentialsReady() {
         this.resolveCredentials();
